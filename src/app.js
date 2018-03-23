@@ -70,12 +70,18 @@ new Vue({
   components: { screenAlbum },
   template: `
     <div class="albums" :class="[showImage]">
-      <ul class="thumbnails">
-        <li v-for="thumbnails in allAlbums(images)" @click="openImage" class="col-md-3 col-sm-4 col-5">
-          <img :src="thumbnails.src" :alt="thumbnails.name"/>
-          <p v-text="thumbnails.album"></p>
-        </li>
-      </ul>
+      <div id="main" class="container" :style="{zIndex: zIndex}">
+        <div id="gallery" class="row">
+          <ul class="col-xs-4 gallery-item">
+            <li class="album" v-for="thumbnails in allAlbums(images)" @click="openImage">
+              <img :src="thumbnails.src" :alt="thumbnails.name" />
+              <img :src="thumbnails.src" :alt="thumbnails.name" />
+              <p v-text="thumbnails.album"></p>
+              <img :src="thumbnails.src" :alt="thumbnails.name" />
+            </li>
+          </ul>
+        </div>
+      </div>
       <screenAlbum v-if="gallery" @close="closeAlbum" :album="currentAlbums" />
     </div>
   `,
@@ -84,6 +90,7 @@ new Vue({
     gallery: false,
     currentAlbums: [],
     showImage: '',
+    zIndex: 0,
   }),
   methods: {
     allAlbums(e) {
@@ -97,6 +104,9 @@ new Vue({
       this.gallery = true;
       this.currentAlbums = [];
       this.showImage = 'showImage';
+      this.zIndex = -1;
+      window.scrollTo( 0, 0 );
+      document.body.style.overflow = 'hidden';
 
       for (let i = 0; i < this.images.length; i++) {
         if (this.images[i].album == e.target.parentElement.textContent.trim() || this.images[i].album == e.target.textContent.trim()) {
@@ -106,8 +116,10 @@ new Vue({
     },
     closeAlbum(e) {
       if (e == false) {
+        document.body.style.overflow = 'auto';
         this.showImage = '';
         this.gallery = e;
+        this.zIndex = 0;
       } 
     }
   }
